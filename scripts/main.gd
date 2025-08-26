@@ -23,11 +23,51 @@ func _ready() -> void:
 	line_edit.grab_focus() # So the player can start typing immediately.
 	line_edit.text_submitted.connect(_on_line_edit_text_submitted)
 	
-func _process(delta: float) -> void:
-	pass
+func process_command(command: String) -> void:
+	var parts = command.strip_edges().to_lower().split(" ")
+	var action = parts[0]
+	var target = ""
+	if parts.size() > 1:
+		target = parts[1]
 
+	match action:
+		"go":
+			do_go(target)
+		"get":
+			do_get(target)
+		"look":
+			display_room_info()
+		_:
+			add_text("Invalid command.")
 
+	# After processing the command, display the new room info
+	display_room_info()
 
+func do_go(direction: String) -> void:
+	var current_room_name: String = player.location
+	var current_room: Dictionary = rooms[current_room_name]
+
+	var capitalized_direction = direction.capitalize()
+	if current_room.has(capitalized_direction):
+		var next_room_name = current_room[capitalized_direction]
+		player.location = next_room_name
+	else:
+		add_text("You can't go that way.")
+		
+func do_get(item_name: String) -> void:
+	var current_room_name: String = player.location
+	var current_room: Dictionary = rooms[current_room_name]
+
+	if current_room.has("Item") and item_name.to_lower() == current_room.Item.to_lower():
+		var item_to_get = current_room.Item
+		if not player.inventory.has(item_to_get):
+			player.inventory.append(item_to_get)
+			current_room.erase("Item") # Remove the item from the room
+			add_text("You picked up the %s." % item_to_get)
+		else:
+			add_text("You already have the %s." % item_to_get)
+	else:
+		add_text("You can't get '%s'." % item_name)
 
 func add_text(text: String) -> void:
 	game_text.append_text(text + "\n")
@@ -65,5 +105,8 @@ func load_game_data() -> void:
 	items_file.close()
 
 
-func _on_line_edit_text_submitted(new_text: String) -> void:
-	pass # Replace with function body.
+
+func _on_line_edit_text_submitted(input_text: String) -> void:
+	add_text("> " + input_text)
+	process_command(input_text)
+	line_edit.clear() # Clear the input field for the next command.
