@@ -1,0 +1,62 @@
+[gd_scene load_steps=4 format=3 uid="uid://bud7emvfin8y5"]
+
+[ext_resource type="Script" uid="uid://iltw4pavqia6" path="res://scripts/main.gd" id="1_0wfyh"]
+[ext_resource type="FontFile" uid="uid://bd23qykau2tut" path="res://assets/fonts/windows_command_prompt.ttf" id="1_o5qli"]
+[ext_resource type="Script" uid="uid://b6aimc3k0cs2g" path="res://scripts/rooms.gd" id="3_sugp2"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_0wfyh")
+
+[node name="Background" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BackgroundColor" type="ColorRect" parent="Background"]
+layout_mode = 2
+color = Color(0.0523757, 0.119172, 0.099265, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="Background"]
+layout_mode = 2
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 25
+
+[node name="Rows" type="VBoxContainer" parent="Background/MarginContainer"]
+layout_mode = 2
+
+[node name="GameText" type="RichTextLabel" parent="Background/MarginContainer/Rows"]
+custom_minimum_size = Vector2(0, 600)
+layout_mode = 2
+theme_override_fonts/normal_font = ExtResource("1_o5qli")
+theme_override_font_sizes/normal_font_size = 32
+
+[node name="PanelContainer" type="HBoxContainer" parent="Background/MarginContainer/Rows"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Background/MarginContainer/Rows/PanelContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_o5qli")
+theme_override_font_sizes/font_size = 32
+text = ">"
+
+[node name="LineEdit" type="LineEdit" parent="Background/MarginContainer/Rows/PanelContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_o5qli")
+theme_override_font_sizes/font_size = 32
+expand_to_text_length = true
+
+[node name="rooms" type="Node" parent="."]
+script = ExtResource("3_sugp2")
+
+[connection signal="text_submitted" from="Background/MarginContainer/Rows/PanelContainer/LineEdit" to="." method="_on_line_edit_text_submitted"]
